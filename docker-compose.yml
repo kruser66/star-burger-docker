@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:14.8
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # front:
+  #   restart: on-failure
+  #   working_dir: /opt/app/frontend
+
+  #   build:
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+
+  #   env_file:
+  #     - ./django/.env
+
+  web:
+    restart: always
+    working_dir: /opt/app/django
+    build:
+      context: .
+      dockerfile: ./django/Dockerfile
+
+    command: gunicorn star_burger.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - 9000:8000
+
+    env_file:
+      - ./django/.env
+
+    volumes:
+      - media:/opt/app/media
+      - static:/opt/app/static
+
+    depends_on:
+      - postgres
+      # - front
+
+volumes:
+  postgres_data:
+  media:
+  static:

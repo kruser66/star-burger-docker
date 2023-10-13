@@ -1,0 +1,73 @@
+{% extends 'base_restaurateur_page.html' %}
+
+{% block title %}Необработанные заказы | Star Burger{% endblock %}
+
+{% block content %}
+  <center>
+    <h2>Необработанные заказы</h2>
+  </center>
+
+  <hr/>
+  <br/>
+  <br/>
+  <div class="container">
+   <table class="table table-responsive">
+    <tr>
+      <th>ID заказа</th>
+      <th>Статус заказа</th>
+      <th>Способ оплаты</th>
+      <th>Стоимость заказа</th>
+      <th>Клиент</th>
+      <th>Телефон</th>
+      <th>Адрес доставки</th>
+      <th>Комментарий к заказу</th>
+      <th>Рестораны</th>
+      <th>Ссылка на админку</th>
+    </tr>
+
+    {% for order in orders %}
+      <tr>
+        <td>{{order.id}}</td>
+        <td>{{order.get_status_display}}</td>
+        {% if order.payment_type %}
+          <td>{{order.get_payment_type_display}}</td>
+        {% else %}
+          <td>-------</td>
+        {% endif %}
+        <td>{{order.total}} руб.</td>
+        <td>{{order.firstname}} {{order.lastname}}</td>
+        <td>{{order.phonenumber}}</td>
+        <td>{{order.address}}</td>
+        <td>{{order.comment}}</td>
+        {% if order.restaurant %}
+          <td>Готовит <b>{{order.restaurant}}</b></td>
+        {% else %}
+          <td>
+            {% for key, value in restaurants.items %}
+              {% if key == order.id %}
+                {% if value is None %}
+                  Ошибка определения координат
+                {% elif value|length == 0 %}
+                  Требуется уточнение (нет возможности)
+                {% else %}
+                  <details>
+                      <summary>Могут приготовить</summary>
+                      {% for item in value %}
+                        <ul>
+                            <li>{{item.0}} - {{item.1}} км</li>
+                        </ul>
+                      {% endfor %}
+                  </details>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </td>
+        {% endif %}
+        <td>
+          <a href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{request.get_full_path|urlencode}}">Редактировать</a>
+        </td>
+      </tr>
+    {% endfor %}
+   </table>
+  </div>
+{% endblock %}

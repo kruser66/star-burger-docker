@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+cd /opt/star-burger/
+
+echo "Deploy start..."
+echo "Pull repo..."
+git pull
+
+echo "Active venv..."
+source venv/bin/activate
+
+echo "Install python lib..."
+pip install -r requirements.txt
+
+echo "Build front..."
+./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
+
+echo "Collect static..."
+python3 manage.py collectstatic --noinput
+
+echo "Migrate..."
+python3 manage.py migrate
+
+echo "Restart site services..."
+systemctl restart star-burger.service
+
+curl -H "X-Rollbar-Access-Token: $(ROLLBAR_TOKEN)" -H "Content-Type: application/json" -X POST 'https://api.rollbar.com/api/1/deploy' -d '{"environment": "production", "revision": "'$(git rev-parse HEAD)'", "rollbar_name": "star-brger", "local_username": "kruser", "comment": "Auto deployment", "status": "succeeded"}'
+echo ""
+echo "Deploy done!!!"
