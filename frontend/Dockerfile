@@ -5,9 +5,8 @@ WORKDIR /opt/app/frontend
 COPY package*.json .
 
 RUN npm install
-RUN npm ci --include=dev
+# RUN npm ci --include=dev
 
-# COPY ./bundles-src/ ./bundles-src/
 COPY . .
 
 RUN ./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"

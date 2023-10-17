@@ -15,16 +15,10 @@ services:
     working_dir: /opt/app/frontend
 
     build: ./frontend
-      # context: front
-      # dockerfile: ./frontend/Dockerfile
-    # expose:
-    #   - 8000
 
   web:
     working_dir: /opt/app/django
     build: ./django
-      # context: back
-      # dockerfile: ./django/Dockerfile
 
     command: gunicorn star_burger.wsgi:application --bind 0.0.0.0:8000
     expose:
@@ -36,7 +30,8 @@ services:
     volumes:
       - media:/opt/app/media
       - static:/opt/app/static
-
+    networks:
+        - web_networks
     depends_on:
       - postgres
       - front
@@ -49,8 +44,13 @@ services:
       depends_on:
         - web
       volumes:
-      - media:/opt/app/media
-      - static:/opt/app/static
+        - media:/opt/app/media
+        - static:/opt/app/static
+      networks:
+        - web_networks
+
+networks:
+  web_networks:
 
 volumes:
   postgres_data:
