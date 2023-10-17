@@ -1,13 +1,17 @@
 FROM node:16.16.0-alpine
 
-WORKDIR /opt/app/frontend
+ENV APP_HOME=/opt/app
 
-COPY package*.json .
+RUN mkdir -p $APP_HOME
 
-RUN npm install
-# RUN npm ci --include=dev
+WORKDIR $APP_HOME
 
-COPY . .
+COPY package*.json ./
+
+RUN npm ci --include=dev
+
+COPY bundles-src ./bundles-src
 
 RUN ./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
 
+COPY . .

@@ -11,30 +11,28 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   front:
+    build: frontend/.
     restart: on-failure
-    working_dir: /opt/app/frontend
-
-    build: ./frontend
+    volumes:
+      - bundles:/opt/app/bundles
 
   web:
-    working_dir: /opt/app/django
-    build: ./django
-
-    command: gunicorn star_burger.wsgi:application --bind 0.0.0.0:8000
-    expose:
-      - 8000
-
+    build:
+      context: .
+      dockerfile: ./django/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - static:/opt/app/static
+      - media:/opt/app/media
+      - bundles:/opt/app/bundles
+    ports:
+      - "8000"
     env_file:
       - ./django/.env
-
-    volumes:
-      - media:/opt/app/media
-      - static:/opt/app/static
-    networks:
-        - web_networks
     depends_on:
       - postgres
       - front
+    command: gunicorn star_burger.wsgi:application --bind 0.0.0.0:8000 --workers 3
 
   nginx:
       build: ./nginx
@@ -46,13 +44,9 @@ services:
       volumes:
         - media:/opt/app/media
         - static:/opt/app/static
-      networks:
-        - web_networks
-
-networks:
-  web_networks:
 
 volumes:
   postgres_data:
   media:
   static:
+  bundles:

@@ -119,10 +119,10 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
-#     STATICFILES_DIRS = [
-#         os.path.join(BASE_DIR, "assets"),
-#         os.path.join(BASE_DIR, "bundles"),
-#     ]
+STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "assets"),
+        os.path.join(BASE_DIR, "bundles"),
+    ]
 
 ROLLBAR_ENABLED = env.bool('ROLLBAR_ENABLED', False)
 
