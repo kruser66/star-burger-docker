@@ -14,23 +14,24 @@ services:
     restart: on-failure
     working_dir: /opt/app/frontend
 
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
-
+    build: ./frontend
+      # context: front
+      # dockerfile: ./frontend/Dockerfile
+    # expose:
+    #   - 8000
 
   web:
     working_dir: /opt/app/django
-    build:
-      context: .
-      dockerfile: ./django/Dockerfile
+    build: ./django
+      # context: back
+      # dockerfile: ./django/Dockerfile
 
     command: gunicorn star_burger.wsgi:application --bind 0.0.0.0:8000
-    ports:
-      - 9000:8000
+    expose:
+      - 8000
 
-    # env_file:
-    #   - ./django/.env
+    env_file:
+      - ./django/.env
 
     volumes:
       - media:/opt/app/media
@@ -48,8 +49,8 @@ services:
       depends_on:
         - web
       volumes:
-        - static:/opt/app/static
-        - media:/opt/app/media
+      - media:/opt/app/media
+      - static:/opt/app/static
 
 volumes:
   postgres_data:

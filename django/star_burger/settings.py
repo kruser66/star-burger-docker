@@ -7,8 +7,6 @@ env = Env()
 env.read_env()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 SECRET_KEY = env('SECRET_KEY')
 YANDEX_GEOCODER_API_KEY = env('YANDEX_GEOCODER_API_KEY', None)
@@ -115,6 +113,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = env.str('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
 INTERNAL_IPS = [
     '127.0.0.1'
