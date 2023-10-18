@@ -14,7 +14,7 @@ services:
     build: frontend/.
     restart: on-failure
     volumes:
-      - bundles:/opt/app/bundles
+      - bundles:/opt/app/static
 
   web:
     build:
@@ -24,7 +24,7 @@ services:
     volumes:
       - static:/opt/app/static
       - media:/opt/app/media
-      - bundles:/opt/app/bundles
+      - bundles:/opt/app/static
     ports:
       - "8000"
     env_file:
