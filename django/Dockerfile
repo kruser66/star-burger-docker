@@ -19,5 +19,3 @@ RUN pip install -r requirements.txt
 COPY ./django .
 
 RUN python3 manage.py collectstatic --no-input
-
-EXPOSE 8000
